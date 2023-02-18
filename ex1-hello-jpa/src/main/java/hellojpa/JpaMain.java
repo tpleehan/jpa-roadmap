@@ -18,14 +18,18 @@ public class JpaMain {
 
 		try {
 
-			Member member = new Member(200L, "member200");
-			em.persist(member);
+			Member member = em.find(Member.class, 150L);
+			member.setName("AAAAA");
 
-			// 플러시는 영속성 컨텍스트를 비우지 않는다.
-			// 영속성 컨텍스트의 변경 내용을 데이터베이스에 동기화한다.
-			// 트랜잭션이라는 작업 단위가 중요하며, 커밋 직전에만 동기화 하면 된다.
-			// em.setFlushMode(FlushModeType.COMMIT, AUTO) 모드 옵션을 바꿀 수 있지만 Auto 기본값 사용하는 것을 권장
-			em.flush();
+			// 준영속 상태
+			// 특정 엔티티만 준영속 상태로 전환
+			// em.detach(member);
+			// 영속성 컨텍스트를 완전히 초기화
+			// em.clear();
+			// 영속성 컨테스트 종료
+			// em.close();
+
+			Member member2 = em.find(Member.class, 150L);
 
 			System.out.println("===============");
 			tx.commit();
