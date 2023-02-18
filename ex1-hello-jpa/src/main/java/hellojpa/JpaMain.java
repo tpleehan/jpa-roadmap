@@ -18,24 +18,17 @@ public class JpaMain {
 
 		try {
 
-			// 비영속
-			Member member = new Member();
-			member.setId(100L);
-			member.setName("HelloJPA");
+			Member member = em.find(Member.class, 150L);
+			member.setName("ZZZZZ");
 
-			System.out.println("==== BEFORE ====");
-			// 객체를 저장한 상태(영속)
-			em.persist(member);
+			// entity의 값만 변경하면 무조건 update query가 실행되고, 트랜잭션 커밋되는 시점에 변경을 반영한다.
+			// 값을 변경하는 경우에는 persist 또는 update와 같이 호출하지 않는다.
+			// em.persist(member);
 
-			// 회원 엔티티를 영속성 컨텍스트에서 분리, 준영속 상태
-			em.detach(member);
-			// 객체를 삭제한 상태(삭제)
-			em.remove(member);
-			System.out.println("==== AFTER ====");
+			System.out.println("===============");
 
 			tx.commit();
 		} catch (Exception e) {
-			// 문제가 생기면 rollback
 			tx.rollback();
 		} finally {
 			em.close();
