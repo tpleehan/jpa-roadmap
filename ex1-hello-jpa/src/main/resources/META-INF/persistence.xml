@@ -14,10 +14,6 @@
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.use_sql_comments" value="true"/>
-            <!-- 개발 초기 단계 - create 또는 update -->
-            <!-- 테스트 서버 - update 또는 validate -->
-            <!-- 스테이징과 운영 서버 - validate 또는 none -->
-            <!-- 운영 장비에는 create, create-drop, update를 사용하면 안된다. -->
             <property name="hibernate.hbm2ddl.auto" value="create"/>
         </properties>
     </persistence-unit>
