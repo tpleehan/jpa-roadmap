@@ -21,13 +21,7 @@ public class JpaMain {
 			Member member = em.find(Member.class, 150L);
 			member.setName("AAAAA");
 
-			// 준영속 상태
-			// 특정 엔티티만 준영속 상태로 전환
-			// em.detach(member);
-			// 영속성 컨텍스트를 완전히 초기화
-			// em.clear();
-			// 영속성 컨테스트 종료
-			// em.close();
+			em.clear();
 
 			Member member2 = em.find(Member.class, 150L);
 
