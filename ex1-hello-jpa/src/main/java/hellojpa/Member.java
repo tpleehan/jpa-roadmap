@@ -2,6 +2,7 @@ package hellojpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -18,8 +19,16 @@ public class Member extends BaseEntity {
 	@Column(name = "USERNAME")
 	private String username;
 
-	@ManyToOne
-	@JoinColumn(name = "TEAM_ID", insertable = false, updatable = false)
+	/*
+	 프록시와 즉시로딩 주의
+	 - 가급적 지연 로딩만 사용(특히 실무에서)
+	 - 즉시 로딩을 적용하면 예상하지 못한 SQL이 발생한다.
+	 - 즉시 로딩은 JPQL에서 N+1 문제를 일으킨다.
+	 - @ManyToOne, @OneToOne은 기본이 즉시 로딩 -> LAZY로 설정
+	 - @OneToMany, @ManyToMany는 기본이 지연로딩
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn
 	private Team team;
 
 	public Long getId() {
