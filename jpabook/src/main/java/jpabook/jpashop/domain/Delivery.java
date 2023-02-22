@@ -3,6 +3,7 @@ package jpabook.jpashop.domain;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
@@ -20,6 +21,6 @@ public class Delivery extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private DeliveryStatus status;
 
-	@OneToOne(mappedBy = "delivery")
+	@OneToOne(mappedBy = "delivery", fetch = FetchType.LAZY)
 	private Order order;
 }
