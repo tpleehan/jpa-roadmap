@@ -1,15 +1,15 @@
 package hellojpa;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity
-public class Member extends BaseEntity {
+public class Member {
 
 	@Id
 	@GeneratedValue
@@ -20,16 +20,37 @@ public class Member extends BaseEntity {
 	private String username;
 
 	/*
-	 프록시와 즉시로딩 주의
-	 - 가급적 지연 로딩만 사용(특히 실무에서)
-	 - 즉시 로딩을 적용하면 예상하지 못한 SQL이 발생한다.
-	 - 즉시 로딩은 JPQL에서 N+1 문제를 일으킨다.
-	 - @ManyToOne, @OneToOne은 기본이 즉시 로딩 -> LAZY로 설정
-	 - @OneToMany, @ManyToMany는 기본이 지연로딩
+	 임베디드 타입과 테이블 매핑
+	 - 임베디드 타입은 엔티티의 값일 뿐이다.
+	 - 임베디드 타입을 사용하기 전과 후에 `매핑하는 테이블은 같다.`
+	 - 객체와 테이블을 아주 세밀하게(find-grained) 매핑하는 것이 가능
+	 - 잘 설계한 ORM 애플리케이션은 매핑한 테이블의 수보다 클래스의 수가 더 많다.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn
-	private Team team;
+
+	// 기간 Period
+	@Embedded
+	private Period workPeriod;
+
+	// 주소 address
+	@Embedded
+	private Address homeAddress;
+
+	/*
+	 @AttributeOverride: 속성 재정의
+	 - 한 엔티티에서 같은 값 타입을 사용하면, 컬럼명이 중복된다.(@AttributeOverride를 사용하지 않는 경우)
+	 - @AttributeOverrides, @AttributeOverride를 사용하면 컬럼명 속성을 재정의 할 수 있다.
+	 */
+	// 주소 work_address
+	@Embedded
+	@AttributeOverrides({
+		@AttributeOverride(name = "city",
+			column = @Column(name = "WORK_CITY")),
+		@AttributeOverride(name = "street",
+			column = @Column(name = "WORK_STREET")),
+		@AttributeOverride(name = "zipcode",
+			column = @Column(name = "WORK_ZIPCODE"))
+	})
+	private Address workAddress;
 
 	public Long getId() {
 		return id;
@@ -47,11 +68,19 @@ public class Member extends BaseEntity {
 		this.username = username;
 	}
 
-	public Team getTeam() {
-		return team;
+	public Period getWorkPeriod() {
+		return workPeriod;
 	}
 
-	public void setTeam(Team team) {
-		this.team = team;
+	public void setWorkPeriod(Period workPeriod) {
+		this.workPeriod = workPeriod;
+	}
+
+	public Address getHomeAddress() {
+		return homeAddress;
+	}
+
+	public void setHomeAddress(Address homeAddress) {
+		this.homeAddress = homeAddress;
 	}
 }
