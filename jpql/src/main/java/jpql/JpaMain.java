@@ -26,6 +26,7 @@ public class JpaMain {
 			Member member = new Member();
 			member.setUsername("teamA");
 			member.setAge(10);
+			member.setType(MemberType.ADMIN);
 
 			member.setTeam(team);
 
@@ -34,18 +35,18 @@ public class JpaMain {
 			em.flush();
 			em.clear();
 
-			/*
-			 JPA 서브쿼리 한계
-			 - JPA는 WHERE, HAVING 절에서만 서브 쿼리 사용 가능
-			 - SELECT 절도 가능(하이버네이트에서 지원)
-			 - FROM 절의 서브 쿼리는 JPQL에서 불가능(현시점에서)
-			   > 조인으로 풀 수 있으면 풀어서 해결
-			 */
-			String query = "select m from Member m left join Team t on m.username = t.name";
-			List<Member> result = em.createQuery(query, Member.class)
+			String query = "select m.username, 'HELLO', true from Member m " +
+				"where m.age between 0 and 10";
+
+			List<Object[]> result = em.createQuery(query)
+				.setParameter("userType", MemberType.ADMIN)
 				.getResultList();
 
-			System.out.println("result = " + result.size());
+			for (Object[] objects : result) {
+				System.out.println("objects = " + objects[0]);
+				System.out.println("objects = " + objects[1]);
+				System.out.println("objects = " + objects[2]);
+			}
 
 			tx.commit();
 		} catch (Exception e) {
