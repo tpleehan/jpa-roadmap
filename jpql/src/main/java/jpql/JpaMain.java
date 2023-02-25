@@ -44,17 +44,31 @@ public class JpaMain {
 			em.flush();
 			em.clear();
 
-			// fetch 조인을 사용하면 Lazy로 설정해도 우선적으로 실행된다.
-			// fetch 조인을 사용하지 않을 경우 n + 1이 된다.
-			String query = "select t from Team t join fetch t.members m";
+			/*
+			 페치 조인의 특징과 한계
+			 - 페치 조인 대상에는 별칭을 줄 수 없다.
+			  > 하이버네이트는 가능하지만, 가급적 사용하지 않는다.
+			 - 둘 이상의 컬렉션은 페치 조인 할 수 없다.
+			 - 컬렉션을 페치 조인하면 페이징 API(setFirstResult, setMaxResults)를 사용할 수 없다.
+			  > 일대일, 다대일 같은 단일 값 연관 필드들은 페치 조인해도 페이징이 가능하다.
+			  > 하이버네이트는 경고 로그를 남기고 메모리에서 페이징(매우 위험)
+			 - 연관된 엔티티들을 SQL 한 번으로 조회 - 성능 최적화
+			 - 엔티티에 직접 적용하는 글로벌 로딩 전략보다 우선으로 한다.
+			  > @OneToMany(fetch = FetchType.LAZE) // 글로벌 로딩 전략
+			 - 실무에서 글로벌 로딩 전략은 모두 지연 로딩
+			 - 최적화가 필요한 곳은 페치 조인 적용
+			 */
+			String query = "select t from Team t";
 
 			List<Team> result = em.createQuery(query, Team.class)
+				.setFirstResult(0)
+				.setMaxResults(2)
 				.getResultList();
 
 			System.out.println("result = " + result.size());
 
 			for (Team team : result) {
-				System.out.println("team = " + team.getName() + "|members = " + team.getMembers().size());
+				System.out.println("team = " + team.getName() + " | members = " + team.getMembers().size());
 				for (Member member : team.getMembers()) {
 					System.out.println("-> member = " + member);
 				}
