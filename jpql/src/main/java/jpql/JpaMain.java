@@ -1,7 +1,5 @@
 package jpql;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -28,41 +26,36 @@ public class JpaMain {
 
 			Member member1 = new Member();
 			member1.setUsername("회원1");
+			member1.setAge(0);
 			member1.setTeam(teamA);
 			em.persist(member1);
 
 			Member member2 = new Member();
 			member2.setUsername("회원2");
+			member2.setAge(0);
 			member2.setTeam(teamA);
 			em.persist(member2);
 
 			Member member3 = new Member();
 			member3.setUsername("회원3");
+			member3.setAge(0);
 			member3.setTeam(teamB);
 			em.persist(member3);
 
-			em.flush();
+			/*
+			 벌크 연산 주의
+			 - 벌크 연산은 영속성 컨텍스트를 무시하고 데이터베이스에 직접 쿼리한다.
+			  > 벌크 연산을 먼저 실행
+			  > 벌크 연산 수행 후 영속성 컨텍스트 초기화
+			 */
+			// flush 자동 호출 (auto mode 일 때는 - comit, query 시점에 flush 호출)
+			int resultCount = em.createQuery("update Member m set m.age = 20")
+				.executeUpdate();
+
 			em.clear();
 
-			/*
-			 Named 쿼리 - 정적 쿼리
-			 - 미리 정의해서 이름을 부여해두고 사용하는 JPQL
-			 - 정적쿼리
-			 - 어노테이션, XML에 정의
-			 - 애플리케이션 로딩 시점에 초기화 후 재사용
-			 - 애플리케이션 로딩 시점에 쿼리 검증
-
-			 Named 쿼리 환경에 따른 설정
-			 - XML이 항상 우선권을 가진다.
-			 - 애플리케이션 운영 환경에 따른 다른 XML을 배포할 수 있다.
-			 */
-			List<Member> resultList = em.createNamedQuery("Member.findByUsername", Member.class)
-				.setParameter("username", "회원1")
-				.getResultList();
-
-			for (Member member : resultList) {
-				System.out.println("member = " + member);
-			}
+			Member findMember = em.find(Member.class, member1.getId());
+			System.out.println("findMember = " + findMember.getAge());
 
 			tx.commit();
 		} catch (Exception e) {
