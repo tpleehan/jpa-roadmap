@@ -1,6 +1,5 @@
 package jpql;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -19,39 +18,47 @@ public class JpaMain {
 		tx.begin();
 
 		try {
-			Team team = new Team();
-			em.persist(team);
+			Team teamA = new Team();
+			teamA.setName("팀A");
+			em.persist(teamA);
+
+			Team teamB = new Team();
+			teamB.setName("팀B");
+			em.persist(teamB);
 
 			Member member1 = new Member();
-			member1.setUsername("관리자");
-			member1.setTeam(team);
+			member1.setUsername("회원1");
+			member1.setTeam(teamA);
 			em.persist(member1);
 
 			Member member2 = new Member();
-			member2.setUsername("관리자");
-			member2.setTeam(team);
+			member2.setUsername("회원2");
+			member2.setTeam(teamA);
 			em.persist(member2);
+
+			Member member3 = new Member();
+			member3.setUsername("회원3");
+			member3.setTeam(teamB);
+			em.persist(member3);
 
 			em.flush();
 			em.clear();
 
-			/*
-			 경로 탐색을 사용한 묵시적 조인 시 주의사항
-			 - 항상 내부 조인
-			 - 컬렉션은 경로 탐색의 끝, 명시적 조인을 통해 별칭을 얻어야 한다.
-			 - 경로 탐색은 주로 SELECT, WHERE 절에서 사용하지만 묵시적 조인으로 인해 SQL의 FROM(JOIN)절에 영향을 준다.
+			// fetch 조인을 사용하면 Lazy로 설정해도 우선적으로 실행된다.
+			// fetch 조인을 사용하지 않을 경우 n + 1이 된다.
+			String query = "select t from Team t join fetch t.members m";
 
-			 실무 조언
-			 - 가급적 묵시적 조인 대신 명시적 조인을 사용한다.
-			 - 조인은 SQL 튜닝에 중요 포인트이기 때문이다.
-			 - 묵시적 조인은 조인이 일어나는 상황을 한눈에 파악하기 어렵다.
-			 */
-			String query = "select t.members from Team t";
-
-			List<Collection> result = em.createQuery(query, Collection.class)
+			List<Team> result = em.createQuery(query, Team.class)
 				.getResultList();
 
-			System.out.println("result = " + result);
+			System.out.println("result = " + result.size());
+
+			for (Team team : result) {
+				System.out.println("team = " + team.getName() + "|members = " + team.getMembers().size());
+				for (Member member : team.getMembers()) {
+					System.out.println("-> member = " + member);
+				}
+			}
 
 			tx.commit();
 		} catch (Exception e) {
