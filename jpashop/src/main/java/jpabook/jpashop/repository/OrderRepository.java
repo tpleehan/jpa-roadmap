@@ -109,4 +109,16 @@ public class OrderRepository {
 		).getResultList();
 	}
 
+	public List<Order> findAllWithItem() {
+		return em.createQuery(
+				"select distinct o from Order o"
+					+ " join fetch o.member m"
+					+ " join fetch o.delivery d"
+					+ " join fetch o.orderItems oi"
+					+ " join fetch oi.item i", Order.class)
+			.setFirstResult(1) // 컬렉션 페치 조인을 사용하면 페이징이 불가능하다.
+			.setMaxResults(100)
+			.getResultList();
+	}
+
 }
