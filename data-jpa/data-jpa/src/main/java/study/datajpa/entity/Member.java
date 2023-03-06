@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,6 +20,11 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "username", "age"})
+// 장점: 애플리케이션 로딩 시점에서 query를 파싱해서 오류가 있으면 문법 오류 또는 오류를 알려준다.
+@NamedQuery(
+	name = "Member.findByUsername",
+	query = "select m from Member m where m.username = :username"
+)
 public class Member {
 
 	@Id
