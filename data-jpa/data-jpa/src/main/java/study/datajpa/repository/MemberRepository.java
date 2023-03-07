@@ -21,7 +21,8 @@ import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 
-public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom, JpaSpecificationExecutor<Member> {
+public interface MemberRepository
+	extends JpaRepository<Member, Long>, MemberRepositoryCustom, JpaSpecificationExecutor<Member> {
 
 	List<Member> findByUsernameAndAgeGreaterThan(String username, int age);
 
@@ -71,5 +72,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	List<Member> findLockByUsername(String username);
+
+	<T> List<T> findProjectionsByUsername(@Param("username") String username, Class<T> type);
 
 }
