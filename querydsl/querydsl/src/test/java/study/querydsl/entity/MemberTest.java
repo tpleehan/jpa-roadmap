@@ -36,7 +36,7 @@ class MemberTest {
 		em.flush();
 		em.clear();
 
-		final List<Member> members = em.createQuery("select m from Member m", Member.class)
+		List<Member> members = em.createQuery("select m from Member m", Member.class)
 			.getResultList();
 
 		for (Member member : members) {
