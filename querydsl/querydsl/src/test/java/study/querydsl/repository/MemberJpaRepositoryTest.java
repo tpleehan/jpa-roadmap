@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import study.querydsl.dto.MemberSearchCondition;
-import study.querydsl.dto.MemberTeamDto;
 import study.querydsl.entity.Member;
 import study.querydsl.entity.Team;
 
@@ -62,7 +61,7 @@ class MemberJpaRepositoryTest {
 		condition.setAgeLoe(40);
 		condition.setTeamName("teamB");
 
-		List<MemberTeamDto> result = memberJpaRepository.searchByBuilder(condition);
+		List<Member> result = memberJpaRepository.searchMember(condition);
 		assertThat(result).extracting("username").containsExactly("member4");
 	}
 
