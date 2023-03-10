@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import study.querydsl.entity.Member;
 
 @Repository
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom {
 	List<Member> findByUsername(String username);
 }
